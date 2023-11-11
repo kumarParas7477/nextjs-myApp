@@ -4,7 +4,10 @@ import { useRouter } from "next/router";
 import { Fragment } from "react";
 import EvenList from "../../Components/events/event-list";
 import ResultsTitle from "../../Components/events/results-title";
+import Button from "../../Components/UI/button";
 import { getFilteredEvents } from "../../dummy-data";
+import ErrorAlert from "./../../Components/UI/error-alert";
+
 function FilteredEventsPage() {
     const { query } = useRouter();
     const { slug } = query;
@@ -21,9 +24,19 @@ function FilteredEventsPage() {
         numMonth < 1 ||
         numMonth > 12;
     if (invalidFilter) {
-        return <p className='center'>Invalid Filter.Please try again.</p>;
+        return (
+            <Fragment>
+                <div className='center'>
+                    <ErrorAlert>
+                        <p className='center'>Invalid Filter.Please try again.</p>
+                    </ErrorAlert>
+
+                    <Button link='/events'>Show All Events</Button>
+                </div>
+            </Fragment>
+        );
     }
-    const date = new Date(numYear, numMonth - 1)
+    const date = new Date(numYear, numMonth - 1);
     const events = getFilteredEvents({ year: numYear, month: numMonth });
     return (
         <Fragment>
@@ -31,7 +44,15 @@ function FilteredEventsPage() {
             {events.length ? (
                 <EvenList items={events} />
             ) : (
-                <h1>No events Found for this filter</h1>
+                <Fragment>
+                    <ErrorAlert>
+                        <p className='center'>No events Found for this filter</p>
+                    </ErrorAlert>
+
+                    <div className='center'>
+                        <Button link='/events'>Show All Events</Button>
+                    </div>
+                </Fragment>
             )}
         </Fragment>
     );
